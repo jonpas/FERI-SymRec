@@ -1,4 +1,4 @@
-# FERI-NeuralSymbolRecognizer
+# FERI-SymRec
 
 Symbol Recognition application using Multi-Layer Neural Networks at Artificial Intelligence (slo. Umetna Inteligenca).
 
