@@ -15,11 +15,10 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    void populateUi();
-
-    uint16_t getHiddenNeurons();
+    uint getSymbolVectors();
+    uint getHiddenNeurons();
     double getLearningRate();
     double getMomentumConst();
     double getMinError();
-    uint16_t getEpochs();
+    uint getEpochs();
 };

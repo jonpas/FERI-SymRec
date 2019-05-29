@@ -4,7 +4,7 @@
 
 #include "neuron.h"
 
-typedef std::vector<Neuron> Layer;
+using Layer = std::vector<Neuron>;
 
 // Multi-Layer neural network with 1 hidden layer
 class NeuralNetwork {
