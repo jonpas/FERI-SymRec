@@ -15,8 +15,9 @@ public:
     ~NeuralNetwork();
 
     void train(QList<Symbol> symbols);
-    char recognize();
+    char recognize(QList<QPointF> points);
 
+    uint symbolPoints() const;
     bool trained() const;
     int symbolsTrained() const;
 

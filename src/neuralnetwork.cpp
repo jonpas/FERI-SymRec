@@ -24,10 +24,14 @@ void NeuralNetwork::train(QList<Symbol> symbols) {
     _trained = true;
 }
 
-char NeuralNetwork::recognize() {
+char NeuralNetwork::recognize(QList<QPointF> points) {
     // TODO
 
     return '2';
+}
+
+uint NeuralNetwork::symbolPoints() const {
+    return _symbolPoints;
 }
 
 bool NeuralNetwork::trained() const {

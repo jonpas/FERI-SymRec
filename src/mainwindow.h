@@ -36,6 +36,8 @@ private:
     uint getEpochs();
     double getMinError();
 
+    bool drawingToPoints(QList<QPointF> &points);
+
 private slots:
     void on_pushButtonLearn_clicked();
     void on_pushButtonInput_clicked();

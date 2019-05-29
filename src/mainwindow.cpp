@@ -62,23 +62,35 @@ double MainWindow::getMinError() {
     return ui->doubleSpinBoxMinError->text().toDouble();
 }
 
-// Slots
-void MainWindow::on_pushButtonInput_clicked() {
-    int symbolPoints = static_cast<int>(getSymbolPoints());
+bool MainWindow::drawingToPoints(QList<QPointF> &points) {
+    int symbolPoints = static_cast<int>(network->symbolPoints());
 
     scene->stopDrawing();
-    QList<QPointF> points = scene->simplify(symbolPoints);
+    points = scene->simplify(symbolPoints);
 
     if (points.size() == symbolPoints) {
         scene->drawPoints(points);
         scene->normalize(points);
+        return true;
+    }
+    return false;
+}
 
-        char character = QInputDialog::getText(this, "Character Name", "Which character did you draw?").at(0).toLatin1();
-        symbols.append({points, character});
+// Slots
+void MainWindow::on_pushButtonInput_clicked() {
+    QList<QPointF> points;
+    bool ok = drawingToPoints(points);
 
-        ui->statusBar->showMessage("Added symbol '" + QString(character) + "'");
+    if (ok) {
+        QString text = QInputDialog::getText(this, "Character Name", "Which character did you draw?", QLineEdit::Normal, nullptr, &ok);
+        if (ok && !text.isEmpty()) {
+            char character = text.at(0).toLatin1();
+            symbols.append({points, character});
+
+            ui->statusBar->showMessage("Added symbol '" + QString(character) + "'");
+        }
     } else {
-        ui->statusBar->showMessage("Error! Symbol normalization failed! Symbol possibly does not have enough points.");
+        ui->statusBar->showMessage("Error! Symbol conversion failed! Symbol possibly does not have enough points.");
     }
 
     updateStatus();
@@ -87,7 +99,6 @@ void MainWindow::on_pushButtonInput_clicked() {
 void MainWindow::on_pushButtonLearn_clicked() {
     if (symbols.size() > 0) {
         network->train(symbols);
-
         ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(network->symbolsTrained()) + " symbols");
     } else {
         ui->statusBar->showMessage("Error! Neural network training failed! No symbols inputted.");
@@ -98,8 +109,15 @@ void MainWindow::on_pushButtonLearn_clicked() {
 }
 
 void MainWindow::on_pushButtonRecognize_clicked() {
-    char character = network->recognize();
-    ui->statusBar->showMessage("Recognized: " + QString(character));
+    QList<QPointF> points;
+    bool ok = drawingToPoints(points);
+
+    if (ok) {
+        char character = network->recognize(points);
+        ui->statusBar->showMessage("Recognized: " + QString(character));
+    } else {
+        ui->statusBar->showMessage("Error! Symbol conversion failed! Symbol possibly does not have enough points.");
+    }
 }
 
 void MainWindow::on_pushButtonCreateNetwork_clicked() {
