@@ -36,17 +36,17 @@ uint MainWindow::getEpochs() {
     return ui->spinBoxEpochs->text().toUInt();
 }
 
-#include <QDebug>
 void MainWindow::on_pushButtonLearn_clicked() {
     ui->statusBar->showMessage("");
     int symbolVectors = static_cast<int>(getSymbolVectors());
+    int symbolPoints = symbolVectors + 1;
 
     scene->stopDrawing();
-    QList<QPointF> points = scene->vectorize(symbolVectors);
+    QList<QPointF> points = scene->simplify(symbolPoints);
 
-    if (points.size() == symbolVectors) {
-        qDebug() << "points" << points.size();
-        scene->drawVectorized(points);
+    if (points.size() == symbolPoints) {
+        scene->drawPoints(points);
+        scene->normalize(points);
     } else {
         ui->statusBar->showMessage("Error! Symbol vectorization failed (symbol possibly too small)!");
     }

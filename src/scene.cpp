@@ -1,5 +1,7 @@
 #include "scene.h"
 
+#include <cmath>
+
 const QRectF Scene::Boundary = {0, 0, 300, 300};
 
 Scene::Scene(QObject *parent) : QGraphicsScene(parent) {
@@ -13,7 +15,7 @@ void Scene::stopDrawing() {
     drawing = false;
 }
 
-QList<QPointF> Scene::vectorize(int vectors) const {
+QList<QPointF> Scene::simplify(int vectors) const {
     QList<QPointF> points;
 
     for (auto &pathItem : pathItems) {
@@ -45,7 +47,34 @@ QList<QPointF> Scene::vectorize(int vectors) const {
     return points;
 }
 
-void Scene::drawVectorized(QList<QPointF> points) {
+void Scene::normalize(QList<QPointF> &points) const {
+    // Find minimal and maximum values in X and Y
+    double minX = points.first().x();
+    double minY = points.first().y();
+    double maxX = minX;
+    double maxY = minY;
+    for (int i = 1; i < points.size(); ++i) {
+        double curX = points.at(i).x();
+        double curY = points.at(i).y();
+
+        if (curX < minX) minX = curX;
+        else if (curX > maxX) maxX = curX;
+
+        if (curY < minY) minY = curY;
+        else if (curY > maxY) maxY = curY;
+    }
+
+    // Calculate diagonal length
+    double diagonalLength = std::sqrt((maxX - minX) * (maxX - minX) + (maxY - minY) * (maxY - minY));
+
+    // Normalize (shift and scale)
+    for (auto &point : points) {
+        point.setX((point.x() - minX) / diagonalLength);
+        point.setY((point.y() - minY) / diagonalLength);
+    }
+}
+
+void Scene::drawPoints(QList<QPointF> points) {
     QPointF previous;
     for (auto &point : points) {
         addRect(point.x() - 1, point.y() - 1, 2, 2, QPen(Qt::blue));

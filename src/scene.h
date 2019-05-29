@@ -15,9 +15,12 @@ public:
 
     void stopDrawing();
 
-    // Vectorize drawn symbol to specified amount of vectors (all available if 0)
-    QList<QPointF> vectorize(int vectors = 0) const;
-    void drawVectorized(QList<QPointF> points);
+    // Simplify drawn symbol to specified amount of points (all available if 0)
+    QList<QPointF> simplify(int points = 0) const;
+    // Normalize points to symbol bounding box (0, 1)
+    void normalize(QList<QPointF> &points) const;
+
+    void drawPoints(QList<QPointF> points);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
