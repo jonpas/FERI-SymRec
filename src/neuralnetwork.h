@@ -2,12 +2,10 @@
 
 #include <QList>
 
-#include "neuron.h"
+#include "layer.h"
 #include "symbol.h"
 
-using Layer = QList<Neuron>;
-
-// Multi-Layer neural network with 1 hidden layer
+// Multi-Layer neural network
 class NeuralNetwork {
 public:
     NeuralNetwork(uint symbolPoints = 15, uint hiddenNeurons = 15, double learningRate = 0.25, double momentumConst = 0.5, uint epochs = 2000, double minError = 0.005);
@@ -28,9 +26,7 @@ private:
     uint _epochs;
     double _minError;
 
-    Layer layerIn;
-    Layer layerHidden;
-    Layer layerOut;
+    QList<Layer> layers;
 
     QList<Symbol> _symbols;
     bool _trained = false;

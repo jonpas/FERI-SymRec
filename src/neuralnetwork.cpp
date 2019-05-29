@@ -17,9 +17,28 @@ NeuralNetwork::NeuralNetwork(uint symbolPoints,
 NeuralNetwork::~NeuralNetwork() {
 }
 
+#include <QDebug>
 void NeuralNetwork::train(QList<Symbol> symbols) {
     _symbols = symbols;
 
+    // Find out amount of out neurons (different possibilities)
+    QList<char> characters;
+    for (auto &symbol : symbols) {
+        if (!characters.contains(symbol.symbol())) {
+            characters.append(symbol.symbol());
+        }
+    }
+    uint outsize = static_cast<uint>(characters.size());
+
+    // Initialize layers
+    layers.append(Layer(static_cast<uint>(symbolsTrained()), _hiddenNeurons));
+    layers.append(Layer(_hiddenNeurons, outsize));
+
+    // DEBUG
+    double x = layers[1].activate(symbols[0].points());
+    qDebug() << x;
+
+    // Train
     for (uint i = 0; i < _epochs; ++i) {
         // feedforward();
         // backpropagation();

@@ -10,18 +10,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    layer.cpp \
     main.cpp \
     mainwindow.cpp \
     neuralnetwork.cpp \
-    neuron.cpp \
     scene.cpp \
     symbol.cpp \
     view.cpp
 
 HEADERS += \
+    layer.h \
     mainwindow.h \
     neuralnetwork.h \
-    neuron.h \
     scene.h \
     symbol.h \
     view.h

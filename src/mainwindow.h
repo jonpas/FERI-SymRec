@@ -39,8 +39,8 @@ private:
     bool drawingToPoints(QList<QPointF> &points);
 
 private slots:
-    void on_pushButtonLearn_clicked();
     void on_pushButtonInput_clicked();
+    void on_pushButtonTrain_clicked();
     void on_pushButtonRecognize_clicked();
     void on_pushButtonResetNetwork_clicked();
 };

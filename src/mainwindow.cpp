@@ -21,7 +21,7 @@ MainWindow::~MainWindow() {
 void MainWindow::updateUi() {
     // Buttons
     ui->pushButtonInput->setEnabled(network != nullptr);
-    ui->pushButtonLearn->setEnabled(network != nullptr);
+    ui->pushButtonTrain->setEnabled(network != nullptr && !network->trained());
     ui->pushButtonRecognize->setEnabled(network != nullptr && network->trained());
 
     // Status
@@ -104,7 +104,7 @@ void MainWindow::on_pushButtonInput_clicked() {
     updateUi();
 }
 
-void MainWindow::on_pushButtonLearn_clicked() {
+void MainWindow::on_pushButtonTrain_clicked() {
     if (symbols.size() > 0) {
         network->train(symbols);
         ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(network->symbolsTrained()) + " symbols");
