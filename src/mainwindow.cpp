@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QInputDialog>
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this); 
     ui->graphicsView->installEventFilter(this);
-    scene = ui->graphicsView->getScene();
+    scene = ui->graphicsView->scene();
 
     updateButtons();
 }
@@ -16,7 +18,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::updateButtons() {
     ui->pushButtonLearn->setEnabled(network != nullptr);
-    ui->pushButtonRecognize->setEnabled(network != nullptr && network->isTrained());
+    ui->pushButtonRecognize->setEnabled(network != nullptr && network->trained());
 
     if (network != nullptr) {
         ui->pushButtonCreateNetwork->setText("Re-Create Neural Network");
@@ -25,8 +27,8 @@ void MainWindow::updateButtons() {
 
 void MainWindow::updateStatus() {
     QString savedSymbolsStr = QString::number(symbols.size());
-    QString networkStr = (network != nullptr && network->isTrained())
-            ? ("Trained (" + QString::number(network->getSymbolsTrained()) + " symbols)")
+    QString networkStr = (network != nullptr && network->trained())
+            ? ("Trained (" + QString::number(network->symbolsTrained()) + " symbols)")
             : "Untrained";
 
     ui->statusNetwork->setPlainText(
@@ -36,8 +38,8 @@ void MainWindow::updateStatus() {
 }
 
 // UI input getters
-uint MainWindow::getSymbolVectors() {
-    return ui->spinBoxSymbolVectors->text().toUInt();
+uint MainWindow::getSymbolPoints() {
+    return ui->spinBoxSymbolPoints->text().toUInt();
 }
 
 uint MainWindow::getHiddenNeurons() {
@@ -62,10 +64,7 @@ double MainWindow::getMinError() {
 
 // Slots
 void MainWindow::on_pushButtonInput_clicked() {
-    ui->statusBar->showMessage("");
-
-    int symbolVectors = static_cast<int>(getSymbolVectors());
-    int symbolPoints = symbolVectors + 1;
+    int symbolPoints = static_cast<int>(getSymbolPoints());
 
     scene->stopDrawing();
     QList<QPointF> points = scene->simplify(symbolPoints);
@@ -73,6 +72,11 @@ void MainWindow::on_pushButtonInput_clicked() {
     if (points.size() == symbolPoints) {
         scene->drawPoints(points);
         scene->normalize(points);
+
+        char character = QInputDialog::getText(this, "Character Name", "Which character did you draw?").at(0).toLatin1();
+        symbols.append({points, character});
+
+        ui->statusBar->showMessage("Added symbol '" + QString(character) + "'");
     } else {
         ui->statusBar->showMessage("Error! Symbol normalization failed! Symbol possibly does not have enough points.");
     }
@@ -81,24 +85,34 @@ void MainWindow::on_pushButtonInput_clicked() {
 }
 
 void MainWindow::on_pushButtonLearn_clicked() {
-    ui->statusBar->showMessage("");
+    if (symbols.size() > 0) {
+        network->train(symbols);
 
-    network->train();
+        ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(network->symbolsTrained()) + " symbols");
+    } else {
+        ui->statusBar->showMessage("Error! Neural network training failed! No symbols inputted.");
+    }
+
     updateButtons();
     updateStatus();
 }
 
 void MainWindow::on_pushButtonRecognize_clicked() {
-    ui->statusBar->showMessage("");
+    char character = network->recognize();
+    ui->statusBar->showMessage("Recognized: " + QString(character));
 }
 
 void MainWindow::on_pushButtonCreateNetwork_clicked() {
     delete network;
-    network = new NeuralNetwork(getHiddenNeurons(),
+    network = new NeuralNetwork(getSymbolPoints(),
+                                getHiddenNeurons(),
                                 getLearningRate(),
                                 getMomentumConst(),
                                 getEpochs(),
                                 getMinError());
+
+    ui->statusBar->showMessage("Neural network created!");
+
     updateButtons();
     updateStatus();
 }

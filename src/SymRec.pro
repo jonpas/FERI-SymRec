@@ -15,6 +15,7 @@ SOURCES += \
     neuralnetwork.cpp \
     neuron.cpp \
     scene.cpp \
+    symbol.cpp \
     view.cpp
 
 HEADERS += \
@@ -22,6 +23,7 @@ HEADERS += \
     neuralnetwork.h \
     neuron.h \
     scene.h \
+    symbol.h \
     view.h
 
 FORMS += \

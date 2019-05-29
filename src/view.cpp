@@ -1,17 +1,17 @@
 #include "view.h"
 
 View::View(QWidget *parent) : QGraphicsView(parent) {
-    scene = new Scene(this);
-    scene->setSceneRect(Scene::Boundary); // Disable auto-scrolling
-    setScene(scene);
+    _scene = new Scene(this);
+    _scene->setSceneRect(Scene::Boundary); // Disable auto-scrolling
+    setScene(_scene);
 }
 
 View::~View() {
-    delete scene;
+    delete _scene;
 }
 
-Scene *View::getScene() {
-    return scene;
+Scene *View::scene() const {
+    return _scene;
 }
 
 void View::resizeEvent(QResizeEvent */*event*/) {

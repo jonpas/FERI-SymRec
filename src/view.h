@@ -11,10 +11,10 @@ public:
     View(QWidget *parent = nullptr);
     ~View() override;
 
-    Scene *getScene();
+    Scene *scene() const;
 
 private:
-    Scene *scene;
+    Scene *_scene;
 
     void resizeEvent(QResizeEvent */*event*/) override;
 };

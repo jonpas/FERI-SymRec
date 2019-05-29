@@ -3,13 +3,12 @@
 #include <QMainWindow>
 
 #include "scene.h"
+#include "symbol.h"
 #include "neuralnetwork.h"
 
 namespace Ui {
 class MainWindow;
 }
-
-using SymbolList = QList<QList<QPointF>>;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -22,7 +21,7 @@ private:
     Ui::MainWindow *ui;
     Scene *scene;
 
-    SymbolList symbols;
+    QList<Symbol> symbols;
 
     NeuralNetwork *network = nullptr;
 
@@ -30,7 +29,7 @@ private:
     void updateStatus();
 
     // UI input getters
-    uint getSymbolVectors();
+    uint getSymbolPoints();
     uint getHiddenNeurons();
     double getLearningRate();
     double getMomentumConst();

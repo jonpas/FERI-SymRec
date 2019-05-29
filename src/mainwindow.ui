@@ -37,16 +37,16 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="optionSymbolVectors">
+       <layout class="QHBoxLayout" name="optionSymbolPoints">
         <item>
-         <widget class="QLabel" name="labelSymbolVectors">
+         <widget class="QLabel" name="labelSymbolPoints">
           <property name="text">
-           <string>Symbol Vectors:</string>
+           <string>Symbol Points:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxSymbolVectors">
+         <widget class="QSpinBox" name="spinBoxSymbolPoints">
           <property name="minimum">
            <number>1</number>
           </property>
