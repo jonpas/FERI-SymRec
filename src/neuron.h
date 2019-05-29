@@ -5,6 +5,9 @@ public:
     Neuron();
     ~Neuron();
 
-    void activate();
+    double activate(double x);
     void sum();
+
+    double sigmoid(double x);
+    double sigmoidPrime(double x);
 };

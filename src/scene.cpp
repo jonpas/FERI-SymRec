@@ -3,6 +3,9 @@
 #include <cmath>
 
 const QRectF Scene::Boundary = {0, 0, 300, 300};
+const double Scene::PenWidthDraw = 2;
+const double Scene::PenWidthPoints = 4;
+const double Scene::PenWidthPointsHalf = PenWidthPoints / 2;
 
 Scene::Scene(QObject *parent) : QGraphicsScene(parent) {
 }
@@ -65,7 +68,7 @@ void Scene::normalize(QList<QPointF> &points) const {
     }
 
     // Calculate diagonal length
-    double diagonalLength = std::sqrt((maxX - minX) * (maxX - minX) + (maxY - minY) * (maxY - minY));
+    double diagonalLength = sqrt((maxX - minX) * (maxX - minX) + (maxY - minY) * (maxY - minY));
 
     // Normalize (shift and scale)
     for (auto &point : points) {
@@ -77,11 +80,12 @@ void Scene::normalize(QList<QPointF> &points) const {
 void Scene::drawPoints(QList<QPointF> points) {
     QPointF previous;
     for (auto &point : points) {
-        addRect(point.x() - 1, point.y() - 1, 2, 2, QPen(Qt::blue));
         if (point != points.first()) {
-            addLine(previous.x(), previous.y(), point.x(), point.y(), QPen(Qt::red));
+            addLine(previous.x(), previous.y(), point.x(), point.y(), QPen(Qt::red, PenWidthPointsHalf));
         }
         previous = point;
+
+        addRect(point.x() - PenWidthPointsHalf, point.y() - PenWidthPointsHalf, PenWidthPoints, PenWidthPoints, QPen(Qt::blue));
     }
 }
 
@@ -95,7 +99,7 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
     pathItem = new QGraphicsPathItem();
     pathItems.append(pathItem);
-    pathItem->setPen(QPen(Qt::black, 2, Qt::SolidLine));
+    pathItem->setPen(QPen(Qt::black, PenWidthDraw, Qt::SolidLine));
 
     QPainterPath path;
     path.moveTo(point);

@@ -199,9 +199,9 @@
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonCreateNetwork">
+       <widget class="QPushButton" name="pushButtonResetNetwork">
         <property name="text">
-         <string>Create Neural Network</string>
+         <string>Reset Neural Network</string>
         </property>
        </widget>
       </item>

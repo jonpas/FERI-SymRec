@@ -9,6 +9,9 @@ class Scene : public QGraphicsScene {
     Q_OBJECT
 public:
     static const QRectF Boundary;
+    static const double PenWidthDraw;
+    static const double PenWidthPoints;
+    static const double PenWidthPointsHalf;
 
     Scene(QObject *parent = nullptr);
     ~Scene();

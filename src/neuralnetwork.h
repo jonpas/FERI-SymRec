@@ -1,12 +1,11 @@
 #pragma once
 
-#include <QtGlobal>
-#include <vector>
+#include <QList>
 
 #include "neuron.h"
 #include "symbol.h"
 
-using Layer = std::vector<Neuron>;
+using Layer = QList<Neuron>;
 
 // Multi-Layer neural network with 1 hidden layer
 class NeuralNetwork {

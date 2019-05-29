@@ -18,9 +18,13 @@ NeuralNetwork::~NeuralNetwork() {
 }
 
 void NeuralNetwork::train(QList<Symbol> symbols) {
-    // TODO
-
     _symbols = symbols;
+
+    for (uint i = 0; i < _epochs; ++i) {
+        // feedforward();
+        // backpropagation();
+    }
+
     _trained = true;
 }
 

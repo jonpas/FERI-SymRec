@@ -25,8 +25,7 @@ private:
 
     NeuralNetwork *network = nullptr;
 
-    void updateButtons();
-    void updateStatus();
+    void updateUi();
 
     // UI input getters
     uint getSymbolPoints();
@@ -36,11 +35,12 @@ private:
     uint getEpochs();
     double getMinError();
 
+    void createNetwork();
     bool drawingToPoints(QList<QPointF> &points);
 
 private slots:
     void on_pushButtonLearn_clicked();
     void on_pushButtonInput_clicked();
     void on_pushButtonRecognize_clicked();
-    void on_pushButtonCreateNetwork_clicked();
+    void on_pushButtonResetNetwork_clicked();
 };

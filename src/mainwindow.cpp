@@ -8,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->graphicsView->installEventFilter(this);
     scene = ui->graphicsView->scene();
 
-    updateButtons();
+    createNetwork();
+
+    updateUi();
 }
 
 MainWindow::~MainWindow() {
@@ -16,16 +18,13 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::updateButtons() {
+void MainWindow::updateUi() {
+    // Buttons
+    ui->pushButtonInput->setEnabled(network != nullptr);
     ui->pushButtonLearn->setEnabled(network != nullptr);
     ui->pushButtonRecognize->setEnabled(network != nullptr && network->trained());
 
-    if (network != nullptr) {
-        ui->pushButtonCreateNetwork->setText("Re-Create Neural Network");
-    }
-}
-
-void MainWindow::updateStatus() {
+    // Status
     QString savedSymbolsStr = QString::number(symbols.size());
     QString networkStr = (network != nullptr && network->trained())
             ? ("Trained (" + QString::number(network->symbolsTrained()) + " symbols)")
@@ -62,6 +61,15 @@ double MainWindow::getMinError() {
     return ui->doubleSpinBoxMinError->text().toDouble();
 }
 
+void MainWindow::createNetwork() {
+    network = new NeuralNetwork(getSymbolPoints(),
+                                getHiddenNeurons(),
+                                getLearningRate(),
+                                getMomentumConst(),
+                                getEpochs(),
+                                getMinError());
+}
+
 bool MainWindow::drawingToPoints(QList<QPointF> &points) {
     int symbolPoints = static_cast<int>(network->symbolPoints());
 
@@ -93,7 +101,7 @@ void MainWindow::on_pushButtonInput_clicked() {
         ui->statusBar->showMessage("Error! Symbol conversion failed! Symbol possibly does not have enough points.");
     }
 
-    updateStatus();
+    updateUi();
 }
 
 void MainWindow::on_pushButtonLearn_clicked() {
@@ -104,8 +112,7 @@ void MainWindow::on_pushButtonLearn_clicked() {
         ui->statusBar->showMessage("Error! Neural network training failed! No symbols inputted.");
     }
 
-    updateButtons();
-    updateStatus();
+    updateUi();
 }
 
 void MainWindow::on_pushButtonRecognize_clicked() {
@@ -120,17 +127,11 @@ void MainWindow::on_pushButtonRecognize_clicked() {
     }
 }
 
-void MainWindow::on_pushButtonCreateNetwork_clicked() {
+void MainWindow::on_pushButtonResetNetwork_clicked() {
     delete network;
-    network = new NeuralNetwork(getSymbolPoints(),
-                                getHiddenNeurons(),
-                                getLearningRate(),
-                                getMomentumConst(),
-                                getEpochs(),
-                                getMinError());
+    createNetwork();
 
-    ui->statusBar->showMessage("Neural network created!");
+    ui->statusBar->showMessage("Neural network reset!");
 
-    updateButtons();
-    updateStatus();
+    updateUi();
 }
