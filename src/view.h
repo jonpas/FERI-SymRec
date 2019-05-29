@@ -11,6 +11,8 @@ public:
     View(QWidget *parent = nullptr);
     ~View() override;
 
+    Scene *getScene();
+
 private:
     Scene *scene;
 

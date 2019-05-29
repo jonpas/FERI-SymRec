@@ -4,6 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this); 
     ui->graphicsView->installEventFilter(this);
+    scene = ui->graphicsView->getScene();
 }
 
 MainWindow::~MainWindow() {
@@ -33,4 +34,21 @@ double MainWindow::getMinError() {
 
 uint MainWindow::getEpochs() {
     return ui->spinBoxEpochs->text().toUInt();
+}
+
+#include <QDebug>
+void MainWindow::on_pushButtonLearn_clicked() {
+    ui->statusBar->showMessage("");
+    int symbolVectors = static_cast<int>(getSymbolVectors());
+
+    scene->stopDrawing();
+    QList<QPointF> points = scene->vectorize(symbolVectors);
+
+    if (points.size() == symbolVectors) {
+        qDebug() << "points" << points.size();
+        scene->drawVectorized(points);
+    } else {
+        ui->statusBar->showMessage("Error! Symbol vectorization failed (symbol possibly too small)!");
+    }
+
 }

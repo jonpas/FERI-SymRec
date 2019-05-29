@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+#include "scene.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,6 +17,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    Scene *scene;
 
     // UI input getters
     uint getSymbolVectors();
@@ -23,4 +26,7 @@ private:
     double getMomentumConst();
     double getMinError();
     uint getEpochs();
+
+private slots:
+    void on_pushButtonLearn_clicked();
 };
