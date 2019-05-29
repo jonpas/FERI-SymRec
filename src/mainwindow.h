@@ -14,4 +14,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    void populateUi();
+
+    uint16_t getHiddenNeurons();
+    double getLearningRate();
+    double getMomentumConst();
+    double getMinError();
+    uint16_t getEpochs();
 };
