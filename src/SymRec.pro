@@ -11,10 +11,14 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    neuralnetwork.cpp \
+    neuron.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    neuralnetwork.h \
+    neuron.h
 
 FORMS += \
     mainwindow.ui
