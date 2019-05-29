@@ -1,15 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QValidator>
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
-    ui->setupUi(this);
+    ui->setupUi(this); 
+    ui->graphicsView->installEventFilter(this);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+// UI input getters
 uint MainWindow::getSymbolVectors() {
     return ui->spinBoxSymbolVectors->text().toUInt();
 }

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -15,6 +16,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    // UI input getters
     uint getSymbolVectors();
     uint getHiddenNeurons();
     double getLearningRate();

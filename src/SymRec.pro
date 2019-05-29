@@ -13,12 +13,16 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     neuralnetwork.cpp \
-    neuron.cpp
+    neuron.cpp \
+    scene.cpp \
+    view.cpp
 
 HEADERS += \
     mainwindow.h \
     neuralnetwork.h \
-    neuron.h
+    neuron.h \
+    scene.h \
+    view.h
 
 FORMS += \
     mainwindow.ui
