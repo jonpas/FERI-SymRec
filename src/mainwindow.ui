@@ -199,11 +199,36 @@
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonLearn">
+       <widget class="QPushButton" name="pushButtonCreateNetwork">
         <property name="text">
-         <string>Learn</string>
+         <string>Create Neural Network</string>
         </property>
        </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="buttons">
+        <item>
+         <widget class="QPushButton" name="pushButtonInput">
+          <property name="text">
+           <string>Input</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonLearn">
+          <property name="text">
+           <string>Train</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonRecognize">
+          <property name="text">
+           <string>Recognize</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -219,7 +244,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPlainTextEdit" name="log">
+       <widget class="QPlainTextEdit" name="statusNetwork">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
           <horstretch>0</horstretch>
@@ -233,7 +258,7 @@
          <bool>false</bool>
         </property>
         <property name="placeholderText">
-         <string>Neural network status will be displayed here ...</string>
+         <string>Status will be displayed here.</string>
         </property>
        </widget>
       </item>
