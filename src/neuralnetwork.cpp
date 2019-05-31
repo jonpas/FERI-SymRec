@@ -22,66 +22,97 @@ void NeuralNetwork::addLayer(Layer layer) {
 }
 
 #include <QDebug>
-void NeuralNetwork::train(QList<Symbol> symbols) {
-    _symbols = symbols;
-
-    // Find out amount of out neurons (different possibilities)
-    /*QList<char> characters;
-    for (auto &symbol : symbols) {
-        if (!characters.contains(symbol.symbol())) {
-            characters.append(symbol.symbol());
-        }
+bool NeuralNetwork::train(Data data, Data results) {
+    // Verify
+    if (data.size() != results.size()) {
+        return false;
     }
-    uint outsize = static_cast<uint>(characters.size());
 
-    // Initialize layers
-    _layers.append(Layer(static_cast<uint>(symbolsTrained()), _hiddenNeurons));
-    _layers.append(Layer(_hiddenNeurons, outsize));
-    */
-
-    // DEBUG
-    //double x = layers[1].activate(symbols[0].points());
-    //qDebug() << x;
+    _symbols = data;
 
     // Train
+    QList<double> mses;
     for (uint i = 0; i < _epochs; ++i) {
-        // feedforward();
-        // backpropagation();
+        for (int j = 0; j < data.size(); ++j) {
+            backPropagation(data[j], results[j]);
+        }
+
+        if (i % 10 == 0) {
+            double mse = 0.0; //mean(square(results - feedForward(data)));
+            mses.append(mse);
+            qDebug() << "Epoch" << i << ":" << "MSE:" << mse;
+        }
     }
 
     _trained = true;
+    return true;
 }
 
-char NeuralNetwork::predict(Data data) {
-    // TODO
-    data = feedForward(data);
+DataRow NeuralNetwork::predict(Data data) {
+    DataRow predictions;
+    for (int i = 0; i < data.size(); ++i) {
+        data[i] = feedForward(data[i]);
 
-    qDebug() << "predictions:" << data;
+        qDebug() << i << data[i];
 
-
-    return '2';
-}
-
-int NeuralNetwork::feedForward(Data data) {
-    int output;
-    for (auto &layer : _layers) {
-        output = layer.activate(data);
+        double prediction = std::distance(data[i].begin(), std::max_element(data[i].begin(), data[i].end()));
+        predictions.append(prediction);
     }
 
-    return output;
+    return predictions;
 }
 
-void NeuralNetwork::backPropagation(Data data, Results results) {
-    int output = feedForward(data);
+DataRow NeuralNetwork::feedForward(DataRow data) {
+    for (auto &layer : _layers) {
+        data = layer.activate(data);
+    }
+    return data;
+}
+
+void NeuralNetwork::backPropagation(DataRow data, DataRow results) {
+    DataRow output = feedForward(data);
 
     // Loop over layers backwards
-    for (auto layerIt = _layers.end() - 1; layerIt != _layers.begin(); --layerIt) {
+    //for (auto layerIt = _layers.end() - 1; layerIt != _layers.begin(); --layerIt) {
+    auto layerIt = _layers.end();
+    while (layerIt != _layers.begin()) {
+        --layerIt;
+
+        qDebug() << "layer";
         // If output layer
         if (layerIt == _layers.end() - 1) {
-            layerIt->error = 0;//results - output;
-            layerIt->delta = layerIt->error * layerIt->sigmoidDerivative(output);
+            // Error
+            for (int i = 0; i < output.size(); ++i) {
+                int results_i = (results.size() == 1) ? 0 : i;
+                layerIt->errors[i] = results[results_i] - output[i];
+            }
+            //qDebug() << "results" << results << "output" << output << "error" << layerIt->errors;
+
+            // Delta
+            for (int i = 0; i < layerIt->errors.size(); ++i) {
+                layerIt->deltas[i] = layerIt->errors[i] * layerIt->sigmoidDerivative(output[i]);
+            }
+            //qDebug() << "results" << results << "output" << output << "deltas" << layerIt->deltas;
+        } else {
+            auto nextLayerIt = layerIt++;
+
+            // Error (dot product)
+            for (int j = 0; j < nextLayerIt->weights.size(); ++j) { // Column length
+                layerIt->errors[j] = 0.0;
+                for (int i = 0; i < nextLayerIt->deltas.size(); ++i) { // Row length
+                    layerIt->errors[j] += nextLayerIt->deltas[i] * nextLayerIt->weights[j][i];
+                }
+            }
+            qDebug() << "next weights" << nextLayerIt->weights << "next deltas" << nextLayerIt->deltas << "error" << layerIt->errors;
+
+            // Delta
+            for (int i = 0; i < layerIt->errors.size(); ++i) {
+                layerIt->deltas[i] = layerIt->errors[i] * layerIt->sigmoidDerivative(layerIt->lastActivation[i]);
+            }
+            //qDebug() << "results" << results << "output" << output << "deltas" << layerIt->deltas;
         }
     }
+    qDebug() << "OVER";
 }
 
 uint NeuralNetwork::symbolPoints() const {

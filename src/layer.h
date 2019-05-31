@@ -2,22 +2,27 @@
 
 #include <QList>
 
-using Data = QList<QList<int>>;
-using Results = QList<int>;
+using Data = QList<QList<double>>;
+using DataRow = QList<double>;
 
 class Layer {
 public:
     Layer(uint inputs, uint neurons);
     ~Layer();
 
-    int activate(Data data);
+    DataRow activate(DataRow data);
 
     double sigmoid(double x);
     double sigmoidDerivative(double x);
 
-    double error;
-    double delta;
+    // TODO privatize (?)
+    QList<QList<double>> weights;
+
+    DataRow errors;
+    DataRow deltas;
+    DataRow lastActivation;
 
 private:
-    QList<QPointF> weights;
+    uint _inputs;
+    uint _neurons;
 };

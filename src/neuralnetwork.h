@@ -13,11 +13,11 @@ public:
 
     void addLayer(Layer layer);
 
-    void train(QList<Symbol> symbols);
-    char predict(Data data);
+    bool train(Data data, Data results);
+    DataRow predict(Data data);
 
-    int feedForward(Data data);
-    void backPropagation(Data data, Results results);
+    DataRow feedForward(DataRow data);
+    void backPropagation(DataRow data, DataRow results);
 
     uint symbolPoints() const;
     bool trained() const;
@@ -33,6 +33,6 @@ private:
 
     QList<Layer> _layers;
 
-    QList<Symbol> _symbols;
+    Data _symbols;
     bool _trained = false;
 };
