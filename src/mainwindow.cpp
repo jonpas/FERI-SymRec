@@ -106,7 +106,7 @@ void MainWindow::on_pushButtonInput_clicked() {
 
 void MainWindow::on_pushButtonTrain_clicked() {
     if (symbols.size() > 0) {
-        network->train(symbols);
+        //network->train(symbols);
         ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(network->symbolsTrained()) + " symbols");
     } else {
         ui->statusBar->showMessage("Error! Neural network training failed! No symbols inputted.");
@@ -120,8 +120,8 @@ void MainWindow::on_pushButtonRecognize_clicked() {
     bool ok = drawingToPoints(points);
 
     if (ok) {
-        char character = network->recognize(points);
-        ui->statusBar->showMessage("Recognized: " + QString(character));
+        //char character = network->predict(points);
+        //ui->statusBar->showMessage("Recognized: " + QString(character));
     } else {
         ui->statusBar->showMessage("Error! Symbol conversion failed! Symbol possibly does not have enough points.");
     }

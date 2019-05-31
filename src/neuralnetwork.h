@@ -11,8 +11,13 @@ public:
     NeuralNetwork(uint symbolPoints = 15, uint hiddenNeurons = 15, double learningRate = 0.25, double momentumConst = 0.5, uint epochs = 2000, double minError = 0.005);
     ~NeuralNetwork();
 
+    void addLayer(Layer layer);
+
     void train(QList<Symbol> symbols);
-    char recognize(QList<QPointF> points);
+    char predict(Data data);
+
+    int feedForward(Data data);
+    void backPropagation(Data data, Results results);
 
     uint symbolPoints() const;
     bool trained() const;
@@ -26,7 +31,7 @@ private:
     uint _epochs;
     double _minError;
 
-    QList<Layer> layers;
+    QList<Layer> _layers;
 
     QList<Symbol> _symbols;
     bool _trained = false;

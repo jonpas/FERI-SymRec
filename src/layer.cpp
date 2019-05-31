@@ -10,24 +10,26 @@ Layer::Layer(uint inputs, uint neurons) {
 
     // TODO Generate weights
     weights.reserve(static_cast<int>(inputs));
-    for (uint i = 0; i < inputs; ++i) {
+    /*for (uint i = 0; i < inputs; ++i) {
         QList<QPointF> points;
         for (uint j = 0; j < neurons; ++j) {
             points.append(QPointF(distribution(generator), distribution(generator)));
         }
         weights.append(points);
-    }
+    }*/
 }
 
 Layer::~Layer() {
 }
 
-double Layer::activate(QList<QPointF> points) {
+int Layer::activate(Data data) {
     // calculate dot product points and weights
-    double x = std::inner_product(points.begin(), points.end(), weights.begin(), 0.0, std::plus<double>(), QPointF::dotProduct);
+    //double x = std::inner_product(points.begin(), points.end(), weights.begin(), 0.0, std::plus<double>(), QPointF::dotProduct);
 
     // apply activation function
-    return sigmoid(x);
+    //return sigmoid(x);
+
+    return sigmoid(1);
 }
 
 double Layer::sigmoid(double x) {
