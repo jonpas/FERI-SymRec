@@ -199,32 +199,18 @@
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonResetNetwork">
-        <property name="text">
-         <string>Reset Neural Network</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <layout class="QHBoxLayout" name="buttons">
         <item>
-         <widget class="QPushButton" name="pushButtonInput">
+         <widget class="QPushButton" name="pushButtonInputPredict">
           <property name="text">
-           <string>Input</string>
+           <string>Input / Reset</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButtonTrain">
+         <widget class="QPushButton" name="pushButtonTrainReset">
           <property name="text">
-           <string>Train</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonRecognize">
-          <property name="text">
-           <string>Recognize</string>
+           <string>Train / Predict</string>
           </property>
          </widget>
         </item>

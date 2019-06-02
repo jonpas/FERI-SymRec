@@ -1,13 +1,11 @@
 #include "neuralnetwork.h"
 
-NeuralNetwork::NeuralNetwork(uint symbolPoints,
-                             uint hiddenNeurons,
+NeuralNetwork::NeuralNetwork(uint hiddenNeurons,
                              double learningRate,
                              double momentumConst,
                              uint epochs,
                              double minError)
-        : _symbolPoints(symbolPoints)
-        , _hiddenNeurons(hiddenNeurons)
+        : _hiddenNeurons(hiddenNeurons)
         , _learningRate(learningRate)
         , _momentumConst(momentumConst)
         , _epochs(epochs)
@@ -28,20 +26,18 @@ bool NeuralNetwork::train(Data data, Data results) {
         return false;
     }
 
-    _symbols = data;
-
     // Train
-    QList<double> mses;
+    //QList<double> mses;
     for (uint i = 0; i < _epochs; ++i) {
         for (int j = 0; j < data.size(); ++j) {
             backPropagate(data[j], results[j]);
         }
 
-        if (i % 10 == 0) {
+        /*if (i % 10 == 0) {
             double mse = 0.0; //mean(square(results - feedForward(data)));
             mses.append(mse);
             qDebug() << "Epoch" << i << ":" << "MSE:" << mse;
-        }
+        }*/
     }
 
     _trained = true;
@@ -51,13 +47,12 @@ bool NeuralNetwork::train(Data data, Data results) {
 DataRow NeuralNetwork::predict(Data data) {
     DataRow predictions;
     for (int i = 0; i < data.size(); ++i) {
-        data[i] = feedForward(data[i]);
+        DataRow ff = feedForward(data[i]);
 
-        qDebug() << i << data[i];
+        qDebug() << i << ff;
 
-        double prediction = std::distance(data[i].begin(), std::max_element(data[i].begin(), data[i].end()));
-        predictions.append(prediction);
-    }
+        double prediction = std::distance(ff.begin(), std::max_element(ff.begin(), ff.end()));
+        predictions.append(prediction);    }
 
     return predictions;
 }
@@ -128,14 +123,6 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
     }
 }
 
-uint NeuralNetwork::symbolPoints() const {
-    return _symbolPoints;
-}
-
 bool NeuralNetwork::trained() const {
     return _trained;
-}
-
-int NeuralNetwork::symbolsTrained() const {
-    return _symbols.size();
 }

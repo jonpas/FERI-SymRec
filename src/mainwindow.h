@@ -3,7 +3,6 @@
 #include <QMainWindow>
 
 #include "scene.h"
-#include "symbol.h"
 #include "neuralnetwork.h"
 
 namespace Ui {
@@ -21,7 +20,8 @@ private:
     Ui::MainWindow *ui;
     Scene *scene;
 
-    QList<Symbol> symbols;
+    QList<QList<QPointF>> symbols;
+    QList<char> characters;
 
     NeuralNetwork *network = nullptr;
 
@@ -37,10 +37,11 @@ private:
 
     void createNetwork();
     bool drawingToPoints(QList<QPointF> &points);
+    DataRow pointsToData(QList<QPointF> points);
+    Data symbolsToData(QList<QList<QPointF>> symbols);
+    Data charactersToData(QList<char> characters);
 
 private slots:
-    void on_pushButtonInput_clicked();
-    void on_pushButtonTrain_clicked();
-    void on_pushButtonRecognize_clicked();
-    void on_pushButtonResetNetwork_clicked();
+    void on_pushButtonInputPredict_clicked();
+    void on_pushButtonTrainReset_clicked();
 };

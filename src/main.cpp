@@ -5,7 +5,7 @@
 #include "neuralnetwork.h"
 
 int main(int argc, char *argv[]) {
-    NeuralNetwork nn = NeuralNetwork(0, 3, 0.3, 0, 290);
+    /*NeuralNetwork nn = NeuralNetwork(0, 3, 0.3, 0, 290);
     nn.addLayer(Layer(2, 3));
     nn.addLayer(Layer(3, 2));
 
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     //nn.predict({0, 1});
     DataRow predictions = nn.predict(data);
     qDebug() << "predictions:" << predictions;
-
+    */
 
     QApplication a(argc, argv);
     MainWindow w;

@@ -25,7 +25,7 @@ Layer::Layer(uint inputs, uint neurons) : _inputs(inputs), _neurons(neurons) {
         deltas.append(0.0);
     }
 
-    if (inputs == 2) {
+    /*if (inputs == 2) {
         weights = {
             {0.54340494, 0.27836939, 0.42451759},
             {0.84477613, 0.00471886, 0.12156912}
@@ -40,7 +40,7 @@ Layer::Layer(uint inputs, uint neurons) : _inputs(inputs), _neurons(neurons) {
             {0.10837689, 0.21969749}
         };
         //activate({0.5, 0.5, 0.5});
-    }
+    }*/
 }
 
 Layer::~Layer() {

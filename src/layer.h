@@ -16,7 +16,7 @@ public:
     double sigmoidDerivative(double x);
 
     // TODO privatize (?)
-    QList<QList<double>> weights;
+    Data weights;
 
     DataRow errors;
     DataRow deltas;

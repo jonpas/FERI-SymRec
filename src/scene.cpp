@@ -18,6 +18,12 @@ void Scene::stopDrawing() {
     drawing = false;
 }
 
+void Scene::reset() {
+    clearPathItems();
+    pathItems.clear();
+    clear();
+}
+
 QList<QPointF> Scene::simplify(int vectors) const {
     QList<QPointF> points;
 
@@ -85,7 +91,7 @@ void Scene::drawPoints(QList<QPointF> points) {
         }
         previous = point;
 
-        addRect(point.x() - PenWidthPointsHalf, point.y() - PenWidthPointsHalf, PenWidthPoints, PenWidthPoints, QPen(Qt::blue));
+        addRect(point.x() - PenWidthPointsHalf, point.y() - PenWidthPointsHalf, PenWidthPoints, PenWidthPoints, QPen(Qt::blue), QBrush(Qt::blue, Qt::SolidPattern));
     }
 }
 
@@ -137,12 +143,6 @@ void Scene::clipToBounds(QPointF &point) {
     } else if (point.y() > Boundary.height()) {
         point.setY(Boundary.height());
     }
-}
-
-void Scene::reset() {
-    clearPathItems();
-    pathItems.clear();
-    clear();
 }
 
 void Scene::clearPathItems() {

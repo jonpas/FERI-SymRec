@@ -17,6 +17,7 @@ public:
     ~Scene();
 
     void stopDrawing();
+    void reset();
 
     // Simplify drawn symbol to specified amount of points (all available if 0)
     QList<QPointF> simplify(int points = 0) const;
@@ -39,6 +40,5 @@ private:
 
     QList<QGraphicsPathItem *> pathItems;
 
-    void reset();
     void clearPathItems();
 };
