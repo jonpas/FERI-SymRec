@@ -34,7 +34,7 @@ bool NeuralNetwork::train(Data data, Data results) {
     QList<double> mses;
     for (uint i = 0; i < _epochs; ++i) {
         for (int j = 0; j < data.size(); ++j) {
-            backPropagation(data[j], results[j]);
+            backPropagate(data[j], results[j]);
         }
 
         if (i % 10 == 0) {
@@ -69,7 +69,7 @@ DataRow NeuralNetwork::feedForward(DataRow data) {
     return data;
 }
 
-void NeuralNetwork::backPropagation(DataRow data, DataRow results) {
+void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
     DataRow output = feedForward(data);
 
     // Loop over layers backwards
@@ -78,7 +78,6 @@ void NeuralNetwork::backPropagation(DataRow data, DataRow results) {
     while (layerIt != _layers.begin()) {
         --layerIt;
 
-        qDebug() << "layer";
         // If output layer
         if (layerIt == _layers.end() - 1) {
             // Error
@@ -94,7 +93,7 @@ void NeuralNetwork::backPropagation(DataRow data, DataRow results) {
             }
             //qDebug() << "results" << results << "output" << output << "deltas" << layerIt->deltas;
         } else {
-            auto nextLayerIt = layerIt++;
+            auto nextLayerIt = layerIt + 1;
 
             // Error (dot product)
             for (int j = 0; j < nextLayerIt->weights.size(); ++j) { // Column length
@@ -103,16 +102,30 @@ void NeuralNetwork::backPropagation(DataRow data, DataRow results) {
                     layerIt->errors[j] += nextLayerIt->deltas[i] * nextLayerIt->weights[j][i];
                 }
             }
-            qDebug() << "next weights" << nextLayerIt->weights << "next deltas" << nextLayerIt->deltas << "error" << layerIt->errors;
+            //qDebug() << "next weights" << nextLayerIt->weights << "next deltas" << nextLayerIt->deltas << "error" << layerIt->errors;
 
             // Delta
             for (int i = 0; i < layerIt->errors.size(); ++i) {
                 layerIt->deltas[i] = layerIt->errors[i] * layerIt->sigmoidDerivative(layerIt->lastActivation[i]);
             }
-            //qDebug() << "results" << results << "output" << output << "deltas" << layerIt->deltas;
+            //qDebug() << "deltas" << layerIt->deltas;
         }
     }
-    qDebug() << "OVER";
+
+    for (int i = 0; i < _layers.size(); ++i) {
+        DataRow inputToUse = data;
+        if (i != 0) {
+            inputToUse = _layers[i - 1].lastActivation;
+        }
+        //qDebug() << "input to use" << inputToUse;
+
+        for (int j = 0; j < _layers[i].weights.size(); ++j) {
+            for (int k = 0; k < _layers[i].weights[j].size(); ++k) {
+                _layers[i].weights[j][k] += _layers[i].deltas[k] * inputToUse[j] * _learningRate;
+            }
+        }
+        //qDebug() << "weights" << layer.weights;
+    }
 }
 
 uint NeuralNetwork::symbolPoints() const {

@@ -5,7 +5,7 @@
 #include "neuralnetwork.h"
 
 int main(int argc, char *argv[]) {
-    NeuralNetwork nn = NeuralNetwork(0, 3, 0.3, 0, /*290*/10);
+    NeuralNetwork nn = NeuralNetwork(0, 3, 0.3, 0, 290);
     nn.addLayer(Layer(2, 3));
     nn.addLayer(Layer(3, 2));
 

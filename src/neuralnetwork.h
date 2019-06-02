@@ -17,7 +17,7 @@ public:
     DataRow predict(Data data);
 
     DataRow feedForward(DataRow data);
-    void backPropagation(DataRow data, DataRow results);
+    void backPropagate(DataRow data, DataRow results);
 
     uint symbolPoints() const;
     bool trained() const;
