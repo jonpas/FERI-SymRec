@@ -17,7 +17,6 @@ void NeuralNetwork::addLayer(Layer layer) {
     _layers.append(layer);
 }
 
-#include <QDebug>
 bool NeuralNetwork::train(Data data, Data results) {
     // Verify
     if (data.size() != results.size()) {
@@ -25,17 +24,10 @@ bool NeuralNetwork::train(Data data, Data results) {
     }
 
     // Train
-    //QList<double> mses;
     for (uint i = 0; i < _epochs; ++i) {
         for (int j = 0; j < data.size(); ++j) {
             backPropagate(data[j], results[j]);
         }
-
-        /*if (i % 10 == 0) {
-            double mse = 0.0; //mean(square(results - feedForward(data)));
-            mses.append(mse);
-            qDebug() << "Epoch" << i << ":" << "MSE:" << mse;
-        }*/
     }
 
     _trained = true;
@@ -44,14 +36,16 @@ bool NeuralNetwork::train(Data data, Data results) {
 
 DataRow NeuralNetwork::predict(Data data) {
     DataRow predictions;
-    for (int i = 0; i < data.size(); ++i) {
-        DataRow ff = feedForward(data[i]);
 
-        qDebug() << i << ff;
+    for (auto &dataRow : data) {
+        dataRow = feedForward(dataRow);
+        qInfo() << "Probabilities:" << dataRow;
 
-        double prediction = std::distance(ff.begin(), std::max_element(ff.begin(), ff.end()));
+        double prediction = std::distance(dataRow.begin(), std::max_element(dataRow.begin(), dataRow.end()));
         predictions.append(prediction);
     }
+
+    qInfo() << "-> Predictions:" << predictions;
 
     return predictions;
 }
@@ -75,8 +69,8 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
         if (layerIt == _layers.end() - 1) {
             // Error
             for (int i = 0; i < output.size(); ++i) {
-                int results_i = (results.size() == 1) ? 0 : i;
-                layerIt->errors[i] = results[results_i] - output[i];
+                int resultsIndex = (results.size() == 1) ? 0 : i;
+                layerIt->errors[i] = results[resultsIndex] - output[i];
             }
 
             // Delta

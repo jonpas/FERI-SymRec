@@ -4,9 +4,11 @@
 #include <random>
 #include <numeric>
 
-Layer::Layer(uint inputs, uint neurons, QString activation) : _inputs(inputs) , _neurons(neurons) , _activation(activation) {
+Layer::Layer(uint inputs, uint neurons, QString activation, QList<double> weightBounds, QList<double> biasBounds)
+        : _inputs(inputs), _neurons(neurons), _activation(activation) {
     std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    std::uniform_real_distribution<double> distWeight(weightBounds[0], weightBounds[1]);
+    std::uniform_real_distribution<double> distBias(biasBounds[0], biasBounds[1]);
 
     // Generate weights
     weights.reserve(static_cast<int>(_inputs));
@@ -14,53 +16,21 @@ Layer::Layer(uint inputs, uint neurons, QString activation) : _inputs(inputs) , 
         QList<double> row;
         row.reserve(static_cast<int>(_neurons));
         for (uint j = 0; j < _neurons; ++j) {
-            row.append(distribution(generator));
+            row.append(distWeight(generator));
         }
         weights.append(row);
     }
 
     // Generate biases
-    biases.reserve(static_cast<int>(neurons));
+    biases.reserve(static_cast<int>(_neurons));
     for (uint i = 0; i < _neurons; ++i) {
-        biases.append(distribution(generator));
+        biases.append(distBias(generator));
     }
 
     // Initialize errors and deltas (for easier re-assignment)
     for (uint i = 0; i < _neurons; ++i) {
         errors.append(0.0);
         deltas.append(0.0);
-    }
-
-    if (true /*debug*/) {
-        if (inputs == 2 && neurons == 3) {
-            weights = {
-                {0.54340494, 0.27836939, 0.42451759},
-                {0.84477613, 0.00471886, 0.12156912}
-            };
-            //activate({0, 0, 0});
-        }
-
-        if (inputs == 3 && neurons == 3) {
-            /*weights = {
-                {0.57509333, 0.89132195},
-                {0.20920212, 0.18532822},
-                {0.10837689, 0.21969749}
-            };*/
-            weights = {
-                {0.57509333, 0.89132195, 0.20920212},
-                {0.18532822, 0.10837689, 0.21969749},
-                {0.97862378, 0.81168315, 0.17194101}
-            };
-            //activate({0.5, 0.5, 0.5});
-        }
-
-        if (inputs == 3 && neurons == 2) {
-            weights = {
-                {0.94002982, 0.81764938},
-                {0.33611195, 0.17541045},
-                {0.37283205, 0.00568851}
-            };
-        }
     }
 }
 
@@ -74,7 +44,7 @@ DataRow Layer::activate(DataRow data) {
         }
 
         // Bias
-        //product += biases[i];
+        product += biases[i];
 
         // Apply activation function
         product = applyActivation(product);

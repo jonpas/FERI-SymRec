@@ -7,7 +7,7 @@ using DataRow = QList<double>;
 
 class Layer {
 public:
-    Layer(uint inputs, uint neurons, QString activation = "sigmoid");
+    Layer(uint inputs, uint neurons, QString activation = "sigmoid", QList<double> weightRandBound = {-0.5, 0.5}, QList<double> biasBounds = {0.0, 0.0});
 
     DataRow activate(DataRow data);
 

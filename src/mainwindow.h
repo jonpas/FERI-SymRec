@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QMap>
 
 #include "scene.h"
 #include "neuralnetwork.h"
@@ -22,24 +23,26 @@ private:
 
     QList<QList<QPointF>> symbols;
     QList<char> characters;
+    QMap<char, DataRow> charCodeMap;
 
     NeuralNetwork *network = nullptr;
 
     void updateUi();
 
     // UI input getters
-    uint getSymbolPoints();
-    uint getHiddenNeurons();
-    double getLearningRate();
-    double getMomentumConst();
-    uint getEpochs();
-    double getMinError();
+    uint getSymbolPoints() const;
+    uint getHiddenNeurons() const;
+    double getLearningRate() const;
+    double getMomentumConst() const;
+    uint getEpochs() const;
+    double getMinError() const;
 
     void createNetwork();
-    bool drawingToPoints(QList<QPointF> &points);
-    DataRow pointsToData(QList<QPointF> points);
-    Data symbolsToData(QList<QList<QPointF>> symbols);
-    Data charactersToData(QList<char> characters);
+    bool drawingToPoints(QList<QPointF> &points) const;
+    DataRow pointsToData(QList<QPointF> points) const;
+    Data symbolsToData() const;
+    Data charactersToData() const;
+    void encodeCharacters();
 
 private slots:
     void on_pushButtonInputPredict_clicked();

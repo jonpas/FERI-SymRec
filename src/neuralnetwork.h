@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QList>
+#include <QDebug>
 
 #include "layer.h"
 

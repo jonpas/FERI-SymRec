@@ -35,27 +35,27 @@ void MainWindow::updateUi() {
 }
 
 // UI input getters
-uint MainWindow::getSymbolPoints() {
+uint MainWindow::getSymbolPoints() const {
     return ui->spinBoxSymbolPoints->text().toUInt();
 }
 
-uint MainWindow::getHiddenNeurons() {
+uint MainWindow::getHiddenNeurons() const {
     return ui->spinBoxHiddenNeurons->text().toUInt();
 }
 
-double MainWindow::getLearningRate() {
+double MainWindow::getLearningRate() const {
     return ui->doubleSpinBoxLearningRate->text().toDouble();
 }
 
-double MainWindow::getMomentumConst() {
+double MainWindow::getMomentumConst() const {
     return ui->doubleSpinBoxMomentumConst->text().toDouble();
 }
 
-uint MainWindow::getEpochs() {
+uint MainWindow::getEpochs() const {
     return ui->spinBoxEpochs->text().toUInt();
 }
 
-double MainWindow::getMinError() {
+double MainWindow::getMinError() const {
     return ui->doubleSpinBoxMinError->text().toDouble();
 }
 
@@ -63,13 +63,13 @@ void MainWindow::createNetwork() {
     network = new NeuralNetwork(getLearningRate(), getMomentumConst(), getEpochs(), getMinError());
 
     // Input: x, y flattened (2x amount of coordinates)
-    network->addLayer(Layer(getSymbolPoints() * 2, getHiddenNeurons(), "sigmoid"));
+    network->addLayer(Layer(getSymbolPoints() * 2, getHiddenNeurons(), "sigmoid", {-0.5, 0.5}, {0.0, 0.0}));
     // Hidden: set by user
-    network->addLayer(Layer(getHiddenNeurons(), static_cast<uint>(characters.size()), "sigmoid"));
+    network->addLayer(Layer(getHiddenNeurons(), static_cast<uint>(characters.size()), "sigmoid", {-0.5, 0.5}, {0.0, 0.0}));
     // Output: amount of different characters
 }
 
-bool MainWindow::drawingToPoints(QList<QPointF> &points) {
+bool MainWindow::drawingToPoints(QList<QPointF> &points) const {
     int symbolPoints = static_cast<int>(getSymbolPoints());
 
     scene->stopDrawing();
@@ -83,7 +83,7 @@ bool MainWindow::drawingToPoints(QList<QPointF> &points) {
     return false;
 }
 
-DataRow MainWindow::pointsToData(QList<QPointF> points) {
+DataRow MainWindow::pointsToData(QList<QPointF> points) const {
     DataRow pointsData;
     for (auto &point : points) {
         pointsData.append({point.x(), point.y()});
@@ -91,7 +91,7 @@ DataRow MainWindow::pointsToData(QList<QPointF> points) {
     return pointsData;
 }
 
-Data MainWindow::symbolsToData(QList<QList<QPointF>> symbols) {
+Data MainWindow::symbolsToData() const {
     Data symbolsData;
     for (auto &symbol : symbols) {
         symbolsData.append(pointsToData(symbol));
@@ -99,17 +99,31 @@ Data MainWindow::symbolsToData(QList<QList<QPointF>> symbols) {
     return symbolsData;
 }
 
-Data MainWindow::charactersToData(QList<char> characters) {
-    Data charactersData;
+Data MainWindow::charactersToData() const {
+    Data charData;
     for (auto &character : characters) {
-        int characterAscii = static_cast<int>(character);
-        charactersData.append({static_cast<double>(characterAscii)});
+        charData.append(charCodeMap[character]);
     }
-    return charactersData;
+    return charData;
+}
+
+void MainWindow::encodeCharacters() {
+    int charAmount = characters.toSet().size();
+
+    for (int i = 0; i < characters.size(); ++i) {
+        DataRow charRow;
+
+        if (!charCodeMap.contains(characters[i])) {
+            for (int j = 0; j < charAmount; ++j) {
+                charRow.append((i == j) ? 1 : 0);
+            }
+
+            charCodeMap[characters[i]] = charRow;
+        }
+    }
 }
 
 // Slots
-#include <QDebug>
 void MainWindow::on_pushButtonInputPredict_clicked() {
     QList<QPointF> points;
     bool ok = drawingToPoints(points);
@@ -132,7 +146,6 @@ void MainWindow::on_pushButtonInputPredict_clicked() {
     } else {
         // Predict
         DataRow predictions = network->predict({pointsToData(points)});
-        qDebug() << "predictions" << predictions;
         double prediction = predictions.at(0);
         char character = characters.at(static_cast<int>(prediction));
         ui->statusBar->showMessage("Recognized: " + QString(character) + " (-> " + QString::number(prediction) + ")");
@@ -144,8 +157,8 @@ void MainWindow::on_pushButtonInputPredict_clicked() {
 void MainWindow::on_pushButtonTrain_clicked() {
     if (symbols.size() > 0) {
         createNetwork();
-        //network->train(symbolsToData(symbols), charactersToData(characters));
-        network->train(symbolsToData(symbols), {{1}, {2}});
+        encodeCharacters();
+        network->train(symbolsToData(), charactersToData());
         ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(symbols.size()) + " symbols");
     } else {
         ui->statusBar->showMessage("Error! Neural network training failed! No symbols given.");
