@@ -7,7 +7,7 @@
 // Multi-Layer neural network
 class NeuralNetwork {
 public:
-    NeuralNetwork(uint hiddenNeurons = 20, double learningRate = 0.25, double momentumConst = 0.5, uint epochs = 2000, double minError = 0.005);
+    NeuralNetwork(double learningRate = 0.25, double momentumConst = 0.5, uint epochs = 2000, double minError = 0.005);
     ~NeuralNetwork();
 
     void setData(Data);

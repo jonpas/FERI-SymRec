@@ -7,16 +7,16 @@ using DataRow = QList<double>;
 
 class Layer {
 public:
-    Layer(uint inputs, uint neurons);
-    ~Layer();
+    Layer(uint inputs, uint neurons, QString activation = "sigmoid");
 
     DataRow activate(DataRow data);
 
-    double sigmoid(double x);
-    double sigmoidDerivative(double x);
+    double applyActivation(double x);
+    double applyActivationDerivative(double x);
 
     // TODO privatize (?)
     Data weights;
+    DataRow biases;
 
     DataRow errors;
     DataRow deltas;
@@ -25,4 +25,6 @@ public:
 private:
     uint _inputs;
     uint _neurons;
+
+    QString _activation;
 };

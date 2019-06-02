@@ -203,18 +203,25 @@
         <item>
          <widget class="QPushButton" name="pushButtonInputPredict">
           <property name="text">
-           <string>Input / Reset</string>
+           <string>Input / Predict</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButtonTrainReset">
+         <widget class="QPushButton" name="pushButtonTrain">
           <property name="text">
-           <string>Train / Predict</string>
+           <string>Train</string>
           </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonReset">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="verticalSpacer">

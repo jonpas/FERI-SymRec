@@ -19,7 +19,7 @@ MainWindow::~MainWindow() {
 void MainWindow::updateUi() {
     // Buttons
     ui->pushButtonInputPredict->setText(network == nullptr ? "Input" : "Predict");
-    ui->pushButtonTrainReset->setText(network == nullptr ? "Train" : "Reset");
+    ui->pushButtonTrain->setEnabled(network == nullptr);
 
     // Status
     QString savedSymbolsStr = QString::number(symbols.size());
@@ -60,16 +60,12 @@ double MainWindow::getMinError() {
 }
 
 void MainWindow::createNetwork() {
-    network = new NeuralNetwork(getHiddenNeurons(),
-                                getLearningRate(),
-                                getMomentumConst(),
-                                getEpochs(),
-                                getMinError());
+    network = new NeuralNetwork(getLearningRate(), getMomentumConst(), getEpochs(), getMinError());
 
     // Input: x, y flattened (2x amount of coordinates)
-    network->addLayer(Layer(getSymbolPoints() * 2, getHiddenNeurons()));
+    network->addLayer(Layer(getSymbolPoints() * 2, getHiddenNeurons(), "sigmoid"));
     // Hidden: set by user
-    network->addLayer(Layer(getHiddenNeurons(), static_cast<uint>(characters.size())));
+    network->addLayer(Layer(getHiddenNeurons(), static_cast<uint>(characters.size()), "sigmoid"));
     // Output: amount of different characters
 }
 
@@ -145,28 +141,29 @@ void MainWindow::on_pushButtonInputPredict_clicked() {
     updateUi();
 }
 
-void MainWindow::on_pushButtonTrainReset_clicked() {
-    if (network == nullptr) {
-        // Train
-        if (symbols.size() > 0) {
-            createNetwork();
-            network->train(symbolsToData(symbols), charactersToData(characters));
-            ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(symbols.size()) + " symbols");
-        } else {
-            ui->statusBar->showMessage("Error! Neural network training failed! No symbols given.");
-        }
+void MainWindow::on_pushButtonTrain_clicked() {
+    if (symbols.size() > 0) {
+        createNetwork();
+        //network->train(symbolsToData(symbols), charactersToData(characters));
+        network->train(symbolsToData(symbols), {{1}, {2}});
+        ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(symbols.size()) + " symbols");
     } else {
-        // Reset
-        symbols.clear();
-        characters.clear();
-
-        delete network;
-        network = nullptr;
-
-        scene->reset();
-
-        ui->statusBar->showMessage("Neural network reset!");
+        ui->statusBar->showMessage("Error! Neural network training failed! No symbols given.");
     }
+
+    updateUi();
+}
+
+void MainWindow::on_pushButtonReset_clicked() {
+    symbols.clear();
+    characters.clear();
+
+    delete network;
+    network = nullptr;
+
+    scene->reset();
+
+    ui->statusBar->showMessage("Neural network reset!");
 
     updateUi();
 }

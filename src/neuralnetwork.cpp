@@ -1,12 +1,10 @@
 #include "neuralnetwork.h"
 
-NeuralNetwork::NeuralNetwork(uint hiddenNeurons,
-                             double learningRate,
+NeuralNetwork::NeuralNetwork(double learningRate,
                              double momentumConst,
                              uint epochs,
                              double minError)
-        : _hiddenNeurons(hiddenNeurons)
-        , _learningRate(learningRate)
+        : _learningRate(learningRate)
         , _momentumConst(momentumConst)
         , _epochs(epochs)
         , _minError(minError) {
@@ -52,7 +50,8 @@ DataRow NeuralNetwork::predict(Data data) {
         qDebug() << i << ff;
 
         double prediction = std::distance(ff.begin(), std::max_element(ff.begin(), ff.end()));
-        predictions.append(prediction);    }
+        predictions.append(prediction);
+    }
 
     return predictions;
 }
@@ -68,7 +67,6 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
     DataRow output = feedForward(data);
 
     // Loop over layers backwards
-    //for (auto layerIt = _layers.end() - 1; layerIt != _layers.begin(); --layerIt) {
     auto layerIt = _layers.end();
     while (layerIt != _layers.begin()) {
         --layerIt;
@@ -80,13 +78,11 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
                 int results_i = (results.size() == 1) ? 0 : i;
                 layerIt->errors[i] = results[results_i] - output[i];
             }
-            //qDebug() << "results" << results << "output" << output << "error" << layerIt->errors;
 
             // Delta
             for (int i = 0; i < layerIt->errors.size(); ++i) {
-                layerIt->deltas[i] = layerIt->errors[i] * layerIt->sigmoidDerivative(output[i]);
+                layerIt->deltas[i] = layerIt->errors[i] * layerIt->applyActivationDerivative(output[i]);
             }
-            //qDebug() << "results" << results << "output" << output << "deltas" << layerIt->deltas;
         } else {
             auto nextLayerIt = layerIt + 1;
 
@@ -97,13 +93,11 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
                     layerIt->errors[j] += nextLayerIt->deltas[i] * nextLayerIt->weights[j][i];
                 }
             }
-            //qDebug() << "next weights" << nextLayerIt->weights << "next deltas" << nextLayerIt->deltas << "error" << layerIt->errors;
 
             // Delta
             for (int i = 0; i < layerIt->errors.size(); ++i) {
-                layerIt->deltas[i] = layerIt->errors[i] * layerIt->sigmoidDerivative(layerIt->lastActivation[i]);
+                layerIt->deltas[i] = layerIt->errors[i] * layerIt->applyActivationDerivative(layerIt->lastActivation[i]);
             }
-            //qDebug() << "deltas" << layerIt->deltas;
         }
     }
 
@@ -112,14 +106,12 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
         if (i != 0) {
             inputToUse = _layers[i - 1].lastActivation;
         }
-        //qDebug() << "input to use" << inputToUse;
 
         for (int j = 0; j < _layers[i].weights.size(); ++j) {
             for (int k = 0; k < _layers[i].weights[j].size(); ++k) {
                 _layers[i].weights[j][k] += _layers[i].deltas[k] * inputToUse[j] * _learningRate;
             }
         }
-        //qDebug() << "weights" << layer.weights;
     }
 }
 

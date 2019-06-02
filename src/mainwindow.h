@@ -43,5 +43,6 @@ private:
 
 private slots:
     void on_pushButtonInputPredict_clicked();
-    void on_pushButtonTrainReset_clicked();
+    void on_pushButtonTrain_clicked();
+    void on_pushButtonReset_clicked();
 };
