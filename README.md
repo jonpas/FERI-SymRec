@@ -24,3 +24,8 @@ Implements neural network with backpropagation for free drawn symbol (character)
 
 **Dependencies:**
 - [Qt](https://www.qt.io/)
+
+### Resources
+
+- [Implementing a flexible neural network with backpropagation from scratch (Python)](https://blog.zhaytam.com/2018/08/15/implement-neural-network-backpropagation)
+- [Build a flexible Neural Network with Backpropagation in Python](https://dev.to/shamdasani/build-a-flexible-neural-network-with-backpropagation-in-python)
