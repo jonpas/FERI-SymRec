@@ -23,7 +23,7 @@ private:
 
     QList<QList<QPointF>> symbols;
     QList<char> characters;
-    QMap<char, DataRow> charCodeMap;
+    QMap<char, ResultRow> charCodeMap;
 
     NeuralNetwork *network = nullptr;
 
@@ -34,15 +34,15 @@ private:
     uint getHiddenNeurons() const;
     double getLearningRate() const;
     double getMomentumConst() const;
-    uint getEpochs() const;
+    uint getMaxEpochs() const;
     double getMinError() const;
 
     void createNetwork();
     bool drawingToPoints(QList<QPointF> &points) const;
     DataRow pointsToData(QList<QPointF> points) const;
     Data symbolsToData() const;
-    Data charactersToData() const;
     void encodeCharacters();
+    Result charactersToResult() const;
 
 private slots:
     void on_pushButtonInputPredict_clicked();

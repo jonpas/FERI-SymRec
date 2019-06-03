@@ -22,9 +22,9 @@ Layer::Layer(uint inputs, uint neurons, QString activation, QList<double> weight
     }
 
     // Generate biases
-    biases.reserve(static_cast<int>(_neurons));
+    _biases.reserve(static_cast<int>(_neurons));
     for (uint i = 0; i < _neurons; ++i) {
-        biases.append(distBias(generator));
+        _biases.append(distBias(generator));
     }
 
     // Initialize errors and deltas (for easier re-assignment)
@@ -44,7 +44,7 @@ DataRow Layer::activate(DataRow data) {
         }
 
         // Bias
-        product += biases[i];
+        product += _biases[i];
 
         // Apply activation function
         product = applyActivation(product);

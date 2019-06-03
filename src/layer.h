@@ -2,8 +2,8 @@
 
 #include <QList>
 
-using Data = QList<QList<double>>;
 using DataRow = QList<double>;
+using Data = QList<DataRow>;
 
 class Layer {
 public:
@@ -14,10 +14,8 @@ public:
     double applyActivation(double x);
     double applyActivationDerivative(double x);
 
-    // TODO privatize (?)
+    // Modified by Neural Network
     Data weights;
-    DataRow biases;
-
     DataRow errors;
     DataRow deltas;
     DataRow lastActivation;
@@ -26,5 +24,6 @@ private:
     uint _inputs;
     uint _neurons;
 
+    DataRow _biases;
     QString _activation;
 };

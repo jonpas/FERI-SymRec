@@ -5,20 +5,22 @@
 
 #include "layer.h"
 
-// Multi-Layer neural network
+using ResultRow = QList<int>;
+using Result = QList<ResultRow>;
+
+// Flexible multi-Layer neural network
 class NeuralNetwork {
 public:
-    NeuralNetwork(double learningRate = 0.25, double momentumConst = 0.5, uint epochs = 2000, double minError = 0.005);
+    NeuralNetwork(double learningRate = 0.25, double momentumConst = 0.5, uint maxEpochs = 2000, double minError = 0.005);
     ~NeuralNetwork();
 
-    void setData(Data);
     void addLayer(Layer layer);
 
-    bool train(Data data, Data results);
-    DataRow predict(Data data);
+    bool train(Data data, Result results);
+    Result predict(Data data);
 
     DataRow feedForward(DataRow data);
-    void backPropagate(DataRow data, DataRow results);
+    void backPropagate(DataRow data, ResultRow results);
 
     bool trained() const;
 
@@ -26,7 +28,7 @@ private:
     uint _hiddenNeurons;
     double _learningRate;
     double _momentumConst; // Not implemented
-    uint _epochs;
+    uint _maxEpochs;
     double _minError;
 
     QList<Layer> _layers;

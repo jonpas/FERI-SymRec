@@ -1,12 +1,14 @@
 #include "neuralnetwork.h"
 
+#include <cmath>
+
 NeuralNetwork::NeuralNetwork(double learningRate,
                              double momentumConst,
-                             uint epochs,
+                             uint maxEpochs,
                              double minError)
         : _learningRate(learningRate)
         , _momentumConst(momentumConst)
-        , _epochs(epochs)
+        , _maxEpochs(maxEpochs)
         , _minError(minError) {
 }
 
@@ -17,16 +19,38 @@ void NeuralNetwork::addLayer(Layer layer) {
     _layers.append(layer);
 }
 
-bool NeuralNetwork::train(Data data, Data results) {
+bool NeuralNetwork::train(Data data, Result results) {
     // Verify
     if (data.size() != results.size()) {
         return false;
     }
 
     // Train
-    for (uint i = 0; i < _epochs; ++i) {
+    for (uint i = 0; i < _maxEpochs; ++i) {
         for (int j = 0; j < data.size(); ++j) {
             backPropagate(data[j], results[j]);
+        }
+
+        // Calculate mean squared error (MSE) every 10th epoch
+        // Exit training if minimal error reached before max epochs
+        if (i % 10 == 0) {
+            DataRow outputsFlat;
+            for (int j = 0; j < data.size(); ++j) {
+                DataRow row = feedForward(data[j]);
+                for (int k = 0; k < row.size(); ++k) {
+                    int resultIndex = std::min(k, results[j].size() - 1);
+                    row[k] = pow(results[j][resultIndex] - row[k], 2);
+                }
+                outputsFlat.append(row);
+            }
+
+            double sum = std::accumulate(outputsFlat.begin(), outputsFlat.end(), 0.0);
+            double mse = sum / outputsFlat.size();
+            qInfo() << "MSE" << i << "=" << mse;
+
+            if (mse <= _minError) {
+                break;
+            }
         }
     }
 
@@ -34,14 +58,19 @@ bool NeuralNetwork::train(Data data, Data results) {
     return true;
 }
 
-DataRow NeuralNetwork::predict(Data data) {
-    DataRow predictions;
+Result NeuralNetwork::predict(Data data) {
+    Result predictions;
 
     for (auto &dataRow : data) {
         dataRow = feedForward(dataRow);
         qInfo() << "Probabilities:" << dataRow;
 
-        double prediction = std::distance(dataRow.begin(), std::max_element(dataRow.begin(), dataRow.end()));
+        int predictionIndex = static_cast<int>(std::distance(dataRow.begin(), std::max_element(dataRow.begin(), dataRow.end())));
+
+        ResultRow prediction;
+        for (int i = 0; i < dataRow.size(); ++i) {
+            prediction.append(i == predictionIndex ? 1 : 0);
+        }
         predictions.append(prediction);
     }
 
@@ -57,7 +86,7 @@ DataRow NeuralNetwork::feedForward(DataRow data) {
     return data;
 }
 
-void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
+void NeuralNetwork::backPropagate(DataRow data, ResultRow results) {
     DataRow output = feedForward(data);
 
     // Loop over layers backwards
@@ -69,8 +98,8 @@ void NeuralNetwork::backPropagate(DataRow data, DataRow results) {
         if (layerIt == _layers.end() - 1) {
             // Error
             for (int i = 0; i < output.size(); ++i) {
-                int resultsIndex = (results.size() == 1) ? 0 : i;
-                layerIt->errors[i] = results[resultsIndex] - output[i];
+                int resultIndex = std::min(i, results.size() - 1);
+                layerIt->errors[i] = results[resultIndex] - output[i];
             }
 
             // Delta

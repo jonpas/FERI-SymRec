@@ -112,6 +112,9 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="toolTip">
+           <string>Not implemented</string>
+          </property>
           <property name="text">
            <string>Momentum Const:</string>
           </property>
@@ -121,6 +124,9 @@
          <widget class="QDoubleSpinBox" name="doubleSpinBoxMomentumConst">
           <property name="enabled">
            <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>Not implemented</string>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -142,16 +148,16 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="optionEpochs">
+       <layout class="QHBoxLayout" name="optionMaxEpochs">
         <item>
-         <widget class="QLabel" name="labelEpochs">
+         <widget class="QLabel" name="labelMaxEpochs">
           <property name="text">
-           <string>Epochs:</string>
+           <string>Maximum Epochs:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxEpochs">
+         <widget class="QSpinBox" name="spinBoxMaxEpochs">
           <property name="minimum">
            <number>1</number>
           </property>

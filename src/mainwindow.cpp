@@ -51,8 +51,8 @@ double MainWindow::getMomentumConst() const {
     return ui->doubleSpinBoxMomentumConst->text().toDouble();
 }
 
-uint MainWindow::getEpochs() const {
-    return ui->spinBoxEpochs->text().toUInt();
+uint MainWindow::getMaxEpochs() const {
+    return ui->spinBoxMaxEpochs->text().toUInt();
 }
 
 double MainWindow::getMinError() const {
@@ -60,12 +60,14 @@ double MainWindow::getMinError() const {
 }
 
 void MainWindow::createNetwork() {
-    network = new NeuralNetwork(getLearningRate(), getMomentumConst(), getEpochs(), getMinError());
+    encodeCharacters(); // Required for output layer neuron count
+
+    network = new NeuralNetwork(getLearningRate(), getMomentumConst(), getMaxEpochs(), getMinError());
 
     // Input: x, y flattened (2x amount of coordinates)
     network->addLayer(Layer(getSymbolPoints() * 2, getHiddenNeurons(), "sigmoid", {-0.5, 0.5}, {0.0, 0.0}));
     // Hidden: set by user
-    network->addLayer(Layer(getHiddenNeurons(), static_cast<uint>(characters.size()), "sigmoid", {-0.5, 0.5}, {0.0, 0.0}));
+    network->addLayer(Layer(getHiddenNeurons(), static_cast<uint>(charCodeMap.size()), "sigmoid", {-0.5, 0.5}, {0.0, 0.0}));
     // Output: amount of different characters
 }
 
@@ -99,19 +101,11 @@ Data MainWindow::symbolsToData() const {
     return symbolsData;
 }
 
-Data MainWindow::charactersToData() const {
-    Data charData;
-    for (auto &character : characters) {
-        charData.append(charCodeMap[character]);
-    }
-    return charData;
-}
-
 void MainWindow::encodeCharacters() {
     int charAmount = characters.toSet().size();
 
     for (int i = 0; i < characters.size(); ++i) {
-        DataRow charRow;
+        ResultRow charRow;
 
         if (!charCodeMap.contains(characters[i])) {
             for (int j = 0; j < charAmount; ++j) {
@@ -121,6 +115,14 @@ void MainWindow::encodeCharacters() {
             charCodeMap[characters[i]] = charRow;
         }
     }
+}
+
+Result MainWindow::charactersToResult() const {
+    Result charData;
+    for (auto &character : characters) {
+        charData.append(charCodeMap[character]);
+    }
+    return charData;
 }
 
 // Slots
@@ -145,10 +147,10 @@ void MainWindow::on_pushButtonInputPredict_clicked() {
         }
     } else {
         // Predict
-        DataRow predictions = network->predict({pointsToData(points)});
-        double prediction = predictions.at(0);
-        char character = characters.at(static_cast<int>(prediction));
-        ui->statusBar->showMessage("Recognized: " + QString(character) + " (-> " + QString::number(prediction) + ")");
+        Result predictions = network->predict({pointsToData(points)});
+        ResultRow charCode = predictions[0];
+        char character = charCodeMap.key(charCode);
+        ui->statusBar->showMessage("Recognized: " + QString(character));
     }
 
     updateUi();
@@ -157,8 +159,7 @@ void MainWindow::on_pushButtonInputPredict_clicked() {
 void MainWindow::on_pushButtonTrain_clicked() {
     if (symbols.size() > 0) {
         createNetwork();
-        encodeCharacters();
-        network->train(symbolsToData(), charactersToData());
+        network->train(symbolsToData(), charactersToResult());
         ui->statusBar->showMessage("Neural network successfully trained with " + QString::number(symbols.size()) + " symbols");
     } else {
         ui->statusBar->showMessage("Error! Neural network training failed! No symbols given.");
